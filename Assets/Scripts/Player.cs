@@ -10,13 +10,17 @@ public class Player : MonoBehaviour
     private float m_MouseSensitivity = 100f;
     private Camera m_Camera;   
     private float m_xRotation = 0f;
-    private bool isGrounded;
-    private Vector3 velocity;
+    private bool m_isGrounded;
+    private Vector3 m_Velocity;
+    private float m_Stamina;
+    private bool m_BlockSprint = false;
+    private Coroutine m_StaminaRecoveryCoroutine = null;
 //---------------------------------------------- public Member Variables ---------------------------------------------------
     public Transform groundCheck;
     public LayerMask groundLayer;
     public const float GRAVITY = -30f;
     public const float JUMP_HEIGHT = 2f;
+    public RectTransform StaminaBar; 
 
     void Start(){
         m_Controller = GetComponent<CharacterController>();
@@ -43,34 +47,54 @@ public class Player : MonoBehaviour
 
         PerformGroundCheck();
 
-        if (isGrounded && velocity.y < 0) {
-            velocity.y = -2f;
+        if (m_isGrounded && m_Velocity.y < 0) {
+            m_Velocity.y = -2f;
         }
 
-        if (isGrounded && Input.GetKeyDown(KeyCode.Space)) {
+        if (m_isGrounded && Input.GetKeyDown(KeyCode.Space)) {
             Debug.Log("Jump");
-            velocity.y = Mathf.Sqrt(JUMP_HEIGHT * 2f * -GRAVITY);
+            m_Velocity.y = Mathf.Sqrt(JUMP_HEIGHT * 2f * -GRAVITY);
         }
         
-        velocity.y += GRAVITY * Time.deltaTime;
+        m_Velocity.y += GRAVITY * Time.deltaTime;
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        m_Controller.Move(velocity * Time.deltaTime);
+        m_Controller.Move(m_Velocity * Time.deltaTime);
         m_Controller.Move(move * speed * Time.deltaTime);
-        
     }
  
     public void PerformGroundCheck() {
-        isGrounded = Physics.CheckSphere(groundCheck.position,
+        m_isGrounded = Physics.CheckSphere(groundCheck.position,
                 GroundCheck.GROUND_CHECK_RADIUS,
                 groundLayer
         );
     }
 
+    private void UpdateStamina(float change_value) {
+        float next_y = Mathf.Clamp((StaminaBar.transform.localScale.y + change_value), 0f, 1f);
+        m_Stamina = next_y;
+        Vector3 updated_scale = new Vector3(StaminaBar.transform.localScale.x, next_y, StaminaBar.transform.localScale.z);
+        StaminaBar.transform.localScale = updated_scale;
+    }
+
     void Update(){
-        //Debug.Log("isGroundet: " + isGrounded);
+        //Debug.Log("isGroundet: " + m_isGrounded);
         UpdateLookDirection();
-        UpdateMovePosition(5f);
+        Debug.Log(m_Stamina);
+        if(Input.GetKey(KeyCode.LeftControl)&& !m_BlockSprint){
+            UpdateMovePosition(8f);
+            UpdateStamina(-0.0075f);
+            if(m_Stamina <= 0.001){
+                m_BlockSprint = true;
+            }
+        }
+        else{
+            UpdateMovePosition(5f);
+            UpdateStamina(0.01f);
+            if(m_Stamina >= 0.95){
+                m_BlockSprint = false;
+            }
+        }
     }
 }
