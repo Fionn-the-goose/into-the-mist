@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     public LayerMask groundLayer;
     public const float GRAVITY = -30f;
     public const float JUMP_HEIGHT = 2f;
-    public RectTransform StaminaBar; 
+    public RectTransform StaminaBar;
 
     void Start(){
         m_Controller = GetComponent<CharacterController>();
@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
         UpdateLookDirection();
         Debug.Log(m_Stamina);
         if(Input.GetKey(KeyCode.LeftControl)&& !m_BlockSprint){
-            UpdateMovePosition(8f);
+            UpdateMovePosition(10f);
             UpdateStamina(-0.0075f);
             if(m_Stamina <= 0.001){
                 m_BlockSprint = true;
