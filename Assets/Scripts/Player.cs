@@ -84,7 +84,7 @@ public class Player : MonoBehaviour
         Debug.Log(m_Stamina);
         if(Input.GetKey(KeyCode.LeftControl)&& !m_BlockSprint){
             UpdateMovePosition(10f);
-            UpdateStamina(-0.0075f);
+            UpdateStamina(-0.005f);
             if(m_Stamina <= 0.001){
                 m_BlockSprint = true;
             }
