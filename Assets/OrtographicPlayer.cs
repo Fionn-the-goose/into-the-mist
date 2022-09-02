@@ -20,13 +20,15 @@ public class OrtographicPlayer : MonoBehaviour
     }
 
     private void UpdatePosition(){
-        float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime;
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
 
-        Vector3 mouseTransform = new Vector3(mouseX, mouseY, 0f);
+        Vector3 mousePos = Input.mousePosition;
 
-        Debug.Log(mouseTransform);
-        transform.Rotate(mouseTransform);
+        Vector3 mouseTransform = new Vector3(mouseX, 0f, mouseY);
+
+        Debug.Log(mousePos);
+        transform.Rotate(mousePos);
 
         float x = Snap(Input.GetAxis("Horizontal"));
         float z = Snap(Input.GetAxis("Vertical"));
